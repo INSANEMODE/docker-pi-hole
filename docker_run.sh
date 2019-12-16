@@ -7,13 +7,15 @@ docker run -d \
     -p 53:53/tcp -p 53:53/udp \
     -p 80:80 \
     -p 443:443 \
+    -e WEBPASSWORD=
     -e TZ="America/Chicago" \
     -v "$(pwd)/etc-pihole/:/etc/pihole/" \
     -v "$(pwd)/etc-dnsmasq.d/:/etc/dnsmasq.d/" \
     --dns=127.0.0.1 --dns=1.1.1.1 \
     --restart=unless-stopped \
     pihole/pihole:latest
-
+    --net=host
+    --cap-add NET_ADMIN
 printf 'Starting up pihole container '
 for i in $(seq 1 20); do
     if [ "$(docker inspect -f "{{.State.Health.Status}}" pihole)" == "healthy" ] ; then
